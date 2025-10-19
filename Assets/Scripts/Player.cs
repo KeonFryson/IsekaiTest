@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
 
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
+    private float rotationY = 0;
     private CharacterController characterController;
     private Animator anim; // << added
     private bool canMove = true;
@@ -31,8 +33,18 @@ public class Player : MonoBehaviour
     private bool isJumping;
     private bool isCrouching;
 
+    /// <summary>
+    /// Mana 
+    /// </summary>
+    public float Mana;
+    public float MaxMana = 100;
+
+    public TMP_Text manaText;
+
     void Awake()
     {
+        Mana = MaxMana;
+
         inputActions = new InputSystem_Actions();
         playerActions = inputActions.Player;
 
@@ -60,14 +72,28 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        if(manaText)
+            manaText.text = "Mana: " + Mana.ToString("0") + " / " + MaxMana.ToString("0");
+
         characterController = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // initialize rotations from current transform so we don't snap on start
+        rotationY = transform.eulerAngles.y;
+        if (playerCamera != null)
+            rotationX = playerCamera.transform.localEulerAngles.x;
+        // convert rotationX to -180..180 range if needed
+        if (rotationX > 180f) rotationX -= 360f;
     }
 
     void Update()
     {
+        if (manaText)
+            manaText.text = "Mana: " + Mana.ToString("0") + " / " + MaxMana.ToString("0");     
+
+
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
@@ -99,12 +125,17 @@ public class Player : MonoBehaviour
 
         characterController.Move(moveDirection * Time.deltaTime);
 
+        // Update rotation values but defer applying them to LateUpdate to avoid jitter with CharacterController.Move
         if (canMove)
         {
-            rotationX += -lookInput.y * lookSpeed;
+            // Use deltaTime for smooth/framerate-independent mouse look
+            rotationX += -lookInput.y * lookSpeed * Time.deltaTime;
             rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed, 0);
+
+            rotationY += lookInput.x * lookSpeed * Time.deltaTime;
+            // keep rotationY within 0-360 for numerical stability
+            if (rotationY > 360f) rotationY -= 360f;
+            else if (rotationY < 0f) rotationY += 360f;
         }
 
         // -------- Animation Control --------
@@ -113,5 +144,18 @@ public class Player : MonoBehaviour
         anim.SetFloat("Strafe", moveInput.x); // Y-axis for left/right strafing
         anim.SetBool("IsJumping", !characterController.isGrounded);
         // -----------------------------------
+    }
+
+    // Apply camera/player rotation in LateUpdate for smoother camera following the final character position
+    void LateUpdate()
+    {
+        if (!canMove) return;
+
+        // Apply yaw to the player root
+        transform.rotation = Quaternion.Euler(0f, rotationY, 0f);
+
+        // Ensure camera is not null and apply pitch locally
+        if (playerCamera != null)
+            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
     }
 }
