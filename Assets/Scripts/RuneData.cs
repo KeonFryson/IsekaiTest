@@ -9,4 +9,6 @@ public class RuneData : ScriptableObject
     public GameObject effectPrefab;
     public float lifetime = 10f;
     public float postionOffset = 3.01f; // Slightly above the ground
+    public float manaCost = 20f;
+    public bool isInfinite = false;
 }

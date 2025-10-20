@@ -17,7 +17,7 @@ public class RuneManager : MonoBehaviour
         inputActions = new InputSystem_Actions();
 
         // Use the "Attack" action to place runes (mapped to mouse left / gamepad / touch in the generated asset)
-        inputActions.Player.Attack.performed += ctx => PlaceRune();
+       // inputActions.Player.Attack.performed += ctx => PlaceRune();
     }
 
     void OnEnable()

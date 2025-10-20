@@ -16,13 +16,15 @@ public class RuneBehavior : MonoBehaviour
             r.material.color = runeData.runeColor;
         }
 
+
         timer = runeData.lifetime;
     }
 
     void Update()
     {
+
         timer -= Time.deltaTime;
-        if (timer <= 0)
+        if (!runeData.isInfinite && timer <= 0)
         {
             ActivateEffect();
             Destroy(gameObject);

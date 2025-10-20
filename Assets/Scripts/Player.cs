@@ -1,3 +1,4 @@
+
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -17,6 +18,14 @@ public class Player : MonoBehaviour
     public float crouchHeight = 1f;
     public float crouchSpeed = 3f;
     public float interactDistance = 5f;
+
+    // Where picked objects are parented (assign in inspector). If left null we'll try to resolve a hand bone at Start.
+    public Transform rightHandHoldPoint;
+    // Optional offsets for fine tuning the held object's position & rotation in hand
+    public Vector3 holdLocalPositionOffset = Vector3.zero;
+    public Vector3 holdLocalRotationOffset = Vector3.zero;
+    // Force applied to dropped objects (throw)
+    public float dropForwardForce = 2f;
 
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
@@ -41,6 +50,13 @@ public class Player : MonoBehaviour
 
     public TMP_Text manaText;
 
+    // ---- Pickup state ----
+    private GameObject heldObject;
+    private Rigidbody heldRb;
+    private Transform heldOriginalParent;
+    private bool heldOriginalKinematic;
+    private bool heldOriginalUseGravity;
+
     void Awake()
     {
         Mana = MaxMana;
@@ -58,6 +74,9 @@ public class Player : MonoBehaviour
         playerActions.Jump.canceled += ctx => isJumping = false;
         playerActions.Crouch.performed += ctx => isCrouching = ctx.ReadValueAsButton();
         playerActions.Crouch.canceled += ctx => isCrouching = false;
+
+        // Interact: press to pick up / drop
+        playerActions.Interact.performed += ctx => OnInteractPerformed();
     }
 
     void OnEnable()
@@ -72,7 +91,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        if(manaText)
+        if (manaText)
             manaText.text = "Mana: " + Mana.ToString("0") + " / " + MaxMana.ToString("0");
 
         characterController = GetComponent<CharacterController>();
@@ -86,12 +105,27 @@ public class Player : MonoBehaviour
             rotationX = playerCamera.transform.localEulerAngles.x;
         // convert rotationX to -180..180 range if needed
         if (rotationX > 180f) rotationX -= 360f;
+
+        // If hold point not assigned, try to resolve a right-hand bone from animator (Humanoid rigs)
+        if (rightHandHoldPoint == null && anim != null)
+        {
+            var hand = anim.GetBoneTransform(HumanBodyBones.RightHand);
+            if (hand != null)
+            {
+                // create a child GameObject used as exact hold point to avoid modifying bone local transforms
+                GameObject holdPoint = new GameObject("HandHoldPoint");
+                holdPoint.transform.SetParent(hand, false);
+                // position slightly forward to sit in hand by default
+                holdPoint.transform.localPosition = new Vector3(0.05f, 0f, 0f);
+                rightHandHoldPoint = holdPoint.transform;
+            }
+        }
     }
 
     void Update()
     {
         if (manaText)
-            manaText.text = "Mana: " + Mana.ToString("0") + " / " + MaxMana.ToString("0");     
+            manaText.text = "Mana: " + Mana.ToString("0") + " / " + MaxMana.ToString("0");
 
 
         Vector3 forward = transform.TransformDirection(Vector3.forward);
@@ -144,6 +178,13 @@ public class Player : MonoBehaviour
         anim.SetFloat("Strafe", moveInput.x); // Y-axis for left/right strafing
         anim.SetBool("IsJumping", !characterController.isGrounded);
         // -----------------------------------
+
+        // If holding an object keep it aligned (parenting already handles position, but ensure local offsets)
+        if (heldObject != null && rightHandHoldPoint != null)
+        {
+            heldObject.transform.localPosition = holdLocalPositionOffset;
+            heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
+        }
     }
 
     // Apply camera/player rotation in LateUpdate for smoother camera following the final character position
@@ -157,5 +198,94 @@ public class Player : MonoBehaviour
         // Ensure camera is not null and apply pitch locally
         if (playerCamera != null)
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+    }
+
+    // Called when Interact action is performed: pick up or drop the nearest valid object
+    private void OnInteractPerformed()
+    {
+        if (heldObject != null)
+        {
+            DropHeldObject();
+            return;
+        }
+
+        TryPickup();
+    }
+
+    private void TryPickup()
+    {
+        if (playerCamera == null) return;
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+        {
+            // Prefer objects tagged "Pickup" or that have a Rigidbody
+            var candidate = hit.collider.gameObject;
+            Rigidbody rb = candidate.GetComponent<Rigidbody>();
+            if (candidate.CompareTag("Pickup") || rb != null)
+            {
+                // pick up the root of the hit transform (if colliders are child objects)
+                Transform root = candidate.transform;
+                // climb to root that has Rigidbody if child collider was hit
+                while (root.parent != null && root.GetComponent<Rigidbody>() == null && root != root.root)
+                    root = root.parent;
+
+                Rigidbody pickRb = root.GetComponent<Rigidbody>();
+                if (pickRb == null)
+                {
+                    // if there is no rigidbody, try to pick the exact object hit
+                    pickRb = rb;
+                }
+
+                if (pickRb == null)
+                {
+                    // no rigidbody at all; still allow pickup by parenting the GameObject (non-physics)
+                    heldObject = root.gameObject;
+                    heldOriginalParent = heldObject.transform.parent;
+                    heldObject.transform.SetParent(rightHandHoldPoint, true);
+                    heldObject.transform.localPosition = holdLocalPositionOffset;
+                    heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
+                    heldRb = null;
+                }
+                else
+                {
+                    // store original state
+                    heldObject = pickRb.gameObject;
+                    heldRb = pickRb;
+                    heldOriginalParent = heldObject.transform.parent;
+                    heldOriginalKinematic = heldRb.isKinematic;
+                    heldOriginalUseGravity = heldRb.useGravity;
+
+                    // disable physics while held
+                    heldRb.isKinematic = true;
+                    heldRb.useGravity = false;
+
+                    // parent to hand hold point and align
+                    heldObject.transform.SetParent(rightHandHoldPoint, true);
+                    heldObject.transform.localPosition = holdLocalPositionOffset;
+                    heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
+                }
+            }
+        }
+    }
+
+    private void DropHeldObject()
+    {
+        if (heldObject == null) return;
+
+        // unparent and restore physics state if applicable
+        heldObject.transform.SetParent(heldOriginalParent, true);
+
+        if (heldRb != null)
+        {
+            heldRb.isKinematic = heldOriginalKinematic;
+            heldRb.useGravity = heldOriginalUseGravity;
+            // apply a small forward impulse so it drops/throws slightly away from the player
+            heldRb.AddForce(playerCamera.transform.forward * dropForwardForce, ForceMode.VelocityChange);
+        }
+
+        heldObject = null;
+        heldRb = null;
+        heldOriginalParent = null;
     }
 }

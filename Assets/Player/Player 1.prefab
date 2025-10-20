@@ -64,6 +64,37 @@ Transform:
   - {fileID: 6700683264295030079}
   m_Father: {fileID: 5879703084550363312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &514547762041650649
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1995570595268282137}
+  m_Layer: 0
+  m_Name: Item Hold
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1995570595268282137
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514547762041650649}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5879703084550363312}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &598963718839361067
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,6 +522,8 @@ GameObject:
   - component: {fileID: 2031654059640141420}
   - component: {fileID: 178325128177159997}
   - component: {fileID: 5526078807109380937}
+  - component: {fileID: 8683478252207426121}
+  - component: {fileID: 4237928551650269002}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Untagged
@@ -587,6 +620,44 @@ MonoBehaviour:
   crouchHeight: 1
   crouchSpeed: 3
   interactDistance: 5
+  rightHandHoldPoint: {fileID: 0}
+  holdLocalPositionOffset: {x: 0, y: 0, z: 0}
+  holdLocalRotationOffset: {x: 0, y: 0, z: 0}
+  dropForwardForce: 2
+  Mana: 0
+  MaxMana: 100
+  manaText: {fileID: 0}
+--- !u!114 &8683478252207426121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2335738194612958637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20def3bb9f8a23f4fbbe80104221a338, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuneManager
+  playerCamera: {fileID: 7250064987980173065}
+  runeTypes:
+  - {fileID: 11400000, guid: 3df146bf25921834288500447d9f9239, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  placementRange: 10
+--- !u!114 &4237928551650269002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2335738194612958637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca56c05379725314ca8a5cae212f57d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UICrosshair
+  crosshairSprite: {fileID: 341212579, guid: 7c6c3826ac4eeb449a299c6ad3e0a8d2, type: 3}
 --- !u!1 &2405779344105028752
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,6 +1010,7 @@ Transform:
   - {fileID: 868521157683244904}
   - {fileID: 8991443151287745052}
   - {fileID: 6591553732540138828}
+  - {fileID: 1995570595268282137}
   m_Father: {fileID: 4826588945788928684}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3774578573561363329
@@ -1505,7 +1577,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
