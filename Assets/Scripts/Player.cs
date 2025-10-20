@@ -1,4 +1,3 @@
-
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -26,6 +25,9 @@ public class Player : MonoBehaviour
     public Vector3 holdLocalRotationOffset = Vector3.zero;
     // Force applied to dropped objects (throw)
     public float dropForwardForce = 2f;
+
+    // Arm IK controller (optional) — assign the ArmIKController that controls hand lift/IK
+    public ArmIKController armIKController;
 
     private Vector3 moveDirection = Vector3.zero;
     private float rotationX = 0;
@@ -265,6 +267,17 @@ public class Player : MonoBehaviour
                     heldObject.transform.localPosition = holdLocalPositionOffset;
                     heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
                 }
+
+                // Notify ArmIKController to lift the hand when an item is picked
+                if (armIKController != null)
+                {
+                    // If rightHandHoldPoint exists and the ArmIKController doesn't have a target assigned,
+                    // assign it so the IK controller moves the same hold point the Player is parenting objects to.
+                    if (armIKController.rightHandTarget == null && rightHandHoldPoint != null)
+                        armIKController.rightHandTarget = rightHandHoldPoint;
+
+                    armIKController.SetHolding(true);
+                }
             }
         }
     }
@@ -283,6 +296,10 @@ public class Player : MonoBehaviour
             // apply a small forward impulse so it drops/throws slightly away from the player
             heldRb.AddForce(playerCamera.transform.forward * dropForwardForce, ForceMode.VelocityChange);
         }
+
+        // Notify ArmIKController to lower the hand when the item is dropped
+        if (armIKController != null)
+            armIKController.SetHolding(false);
 
         heldObject = null;
         heldRb = null;
