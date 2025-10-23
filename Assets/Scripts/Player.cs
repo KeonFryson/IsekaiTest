@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
 
     // Where picked objects are parented (assign in inspector). If left null we'll try to resolve a hand bone at Start.
     public Transform rightHandHoldPoint;
-    // Optional offsets for fine tuning the held object's position & rotation in hand
+    // Optional default offsets for fine tuning the held object's position & rotation in hand (used when the item doesn't provide its own offsets)
     public Vector3 holdLocalPositionOffset = Vector3.zero;
     public Vector3 holdLocalRotationOffset = Vector3.zero;
     // Force applied to dropped objects (throw)
@@ -58,6 +58,12 @@ public class Player : MonoBehaviour
     private Transform heldOriginalParent;
     private bool heldOriginalKinematic;
     private bool heldOriginalUseGravity;
+
+    // Per-held-item offsets (populated when picking up an item)
+    private Vector3 heldItemLocalPositionOffset = Vector3.zero;
+    private Vector3 heldItemLocalRotationOffset = Vector3.zero;
+
+    private ItemHoldOffsets itemHoldOffsets;
 
     void Awake()
     {
@@ -184,8 +190,17 @@ public class Player : MonoBehaviour
         // If holding an object keep it aligned (parenting already handles position, but ensure local offsets)
         if (heldObject != null && rightHandHoldPoint != null)
         {
-            heldObject.transform.localPosition = holdLocalPositionOffset;
-            heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
+            // Prefer per-item offsets from ItemHoldOffsets if available, otherwise use stored per-item values or player defaults.
+            if (itemHoldOffsets != null)
+            {
+                heldObject.transform.localPosition = itemHoldOffsets.holdLocalPositionOffset;
+                heldObject.transform.localRotation = Quaternion.Euler(itemHoldOffsets.holdLocalRotationOffset);
+            }
+            else
+            {
+                heldObject.transform.localPosition = heldItemLocalPositionOffset;
+                heldObject.transform.localRotation = Quaternion.Euler(heldItemLocalRotationOffset);
+            }
         }
     }
 
@@ -239,14 +254,29 @@ public class Player : MonoBehaviour
                     pickRb = rb;
                 }
 
+                // Determine per-item offsets (fallback to Player defaults)
+                var offsetsComp = root.GetComponent<ItemHoldOffsets>();
+                if (offsetsComp != null)
+                {
+                    heldItemLocalPositionOffset = offsetsComp.holdLocalPositionOffset;
+                    heldItemLocalRotationOffset = offsetsComp.holdLocalRotationOffset;
+                    itemHoldOffsets = offsetsComp; // remember the component so Update can use it directly
+                }
+                else
+                {
+                    heldItemLocalPositionOffset = holdLocalPositionOffset;
+                    heldItemLocalRotationOffset = holdLocalRotationOffset;
+                    itemHoldOffsets = null;
+                }
+
                 if (pickRb == null)
                 {
                     // no rigidbody at all; still allow pickup by parenting the GameObject (non-physics)
                     heldObject = root.gameObject;
                     heldOriginalParent = heldObject.transform.parent;
                     heldObject.transform.SetParent(rightHandHoldPoint, true);
-                    heldObject.transform.localPosition = holdLocalPositionOffset;
-                    heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
+                    heldObject.transform.localPosition = heldItemLocalPositionOffset;
+                    heldObject.transform.localRotation = Quaternion.Euler(heldItemLocalRotationOffset);
                     heldRb = null;
                 }
                 else
@@ -264,8 +294,8 @@ public class Player : MonoBehaviour
 
                     // parent to hand hold point and align
                     heldObject.transform.SetParent(rightHandHoldPoint, true);
-                    heldObject.transform.localPosition = holdLocalPositionOffset;
-                    heldObject.transform.localRotation = Quaternion.Euler(holdLocalRotationOffset);
+                    heldObject.transform.localPosition = heldItemLocalPositionOffset;
+                    heldObject.transform.localRotation = Quaternion.Euler(heldItemLocalRotationOffset);
                 }
 
                 // Notify ArmIKController to lift the hand when an item is picked
@@ -304,5 +334,10 @@ public class Player : MonoBehaviour
         heldObject = null;
         heldRb = null;
         heldOriginalParent = null;
+
+        // reset per-item offsets to player defaults
+        heldItemLocalPositionOffset = holdLocalPositionOffset;
+        heldItemLocalRotationOffset = holdLocalRotationOffset;
+        itemHoldOffsets = null;
     }
 }
