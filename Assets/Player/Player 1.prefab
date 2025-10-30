@@ -638,7 +638,6 @@ GameObject:
   - component: {fileID: 2031654059640141420}
   - component: {fileID: 178325128177159997}
   - component: {fileID: 5526078807109380937}
-  - component: {fileID: 8683478252207426121}
   - component: {fileID: 4237928551650269002}
   - component: {fileID: 187983069053567452}
   m_Layer: 0
@@ -847,24 +846,6 @@ MonoBehaviour:
   Mana: 100
   MaxMana: 100
   manaText: {fileID: 0}
---- !u!114 &8683478252207426121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2335738194612958637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20def3bb9f8a23f4fbbe80104221a338, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RuneManager
-  playerCamera: {fileID: 7250064987980173065}
-  runeTypes:
-  - {fileID: 11400000, guid: 3df146bf25921834288500447d9f9239, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  placementRange: 10
 --- !u!114 &4237928551650269002
 MonoBehaviour:
   m_ObjectHideFlags: 0

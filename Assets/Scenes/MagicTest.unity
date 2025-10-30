@@ -245,6 +245,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!4 &90383233 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3557875738343846656, guid: 88658f7ad6cef00478add9cbbab4f7d7, type: 3}
+  m_PrefabInstance: {fileID: 7555987400966833229}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &301494394
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -452,8 +457,10 @@ GameObject:
   m_Component:
   - component: {fileID: 432014338}
   - component: {fileID: 432014337}
+  - component: {fileID: 432014340}
   - component: {fileID: 432014336}
   - component: {fileID: 432014335}
+  - component: {fileID: 432014339}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -553,6 +560,47 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &432014339
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432014334}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &432014340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432014334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602f5c1d2a7355e4caed9789a12df21b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 100
 --- !u!1 &548918260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,8 +1132,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1245957497}
   - component: {fileID: 1245957496}
+  - component: {fileID: 1245957499}
   - component: {fileID: 1245957495}
   - component: {fileID: 1245957494}
+  - component: {fileID: 1245957498}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -1185,6 +1235,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1245957498
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245957493}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1245957499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245957493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602f5c1d2a7355e4caed9789a12df21b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 100
+--- !u!1 &1430373886 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2335738194612958637, guid: 88658f7ad6cef00478add9cbbab4f7d7, type: 3}
+  m_PrefabInstance: {fileID: 7555987400966833229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1430373895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430373886}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b67cb20cc31bfc44a839d2cb6183d68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpellCaster
+  spell: {fileID: 11400000, guid: 3e9867106669f7f46953006ae6452074, type: 2}
+  castOrigin: {fileID: 90383233}
+  debugExpose: 1
+--- !u!114 &1430373896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430373886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4c8957f50494b1fa3488216c4c10d80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FullOpaqueVFX.VFX_SpellManager
+  currentSpell: {fileID: 11400000, guid: 8c6eff7fa35d4424b80846624bb1e872, type: 2}
+  target: {fileID: 1531032763}
 --- !u!1001 &1529168259
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1259,6 +1384,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1531032763}
+  - component: {fileID: 1531032765}
   - component: {fileID: 1531032762}
   - component: {fileID: 1531032761}
   - component: {fileID: 1531032760}
@@ -1389,6 +1515,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1531032765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531032759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602f5c1d2a7355e4caed9789a12df21b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 100
 --- !u!4 &1618982975 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1995570595268282137, guid: 88658f7ad6cef00478add9cbbab4f7d7, type: 3}
@@ -1404,8 +1544,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1739830889}
   - component: {fileID: 1739830888}
+  - component: {fileID: 1739830891}
   - component: {fileID: 1739830887}
   - component: {fileID: 1739830886}
+  - component: {fileID: 1739830890}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -1505,6 +1647,47 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1739830890
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739830885}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1739830891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739830885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602f5c1d2a7355e4caed9789a12df21b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 100
 --- !u!1 &1809139810
 GameObject:
   m_ObjectHideFlags: 0
@@ -25918,7 +26101,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2335738194612958637, guid: 88658f7ad6cef00478add9cbbab4f7d7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1430373895}
+    - targetCorrespondingSourceObject: {fileID: 2335738194612958637, guid: 88658f7ad6cef00478add9cbbab4f7d7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1430373896}
   m_SourcePrefab: {fileID: 100100000, guid: 88658f7ad6cef00478add9cbbab4f7d7, type: 3}
 --- !u!33 &7558729845125472914
 MeshFilter:
